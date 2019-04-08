@@ -9,7 +9,7 @@ class Controller {
     Controller(Gtk::Window* window, Store store);
     Controller(Gtk::Window* window);
     Controller();
-//    void gui();
+    void gui();
 //    void cli();
     void execute_cmd(int cmd);
 
