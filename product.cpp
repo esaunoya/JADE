@@ -19,7 +19,7 @@ void Product::save(std::ostream& ost) {
 std::string Product::name() const {return _name;}
 
 std::string Product::to_string(){
-  std::cout << product._name << " ($" << std::fixed << std::setprecision(2) << product._price << ')';
+  std::cout << _name << " ($" << std::fixed << std::setprecision(2) << _price << ')';
 }
 
 //double Product::price() const {return _price;}
