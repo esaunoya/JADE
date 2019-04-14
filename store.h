@@ -1,33 +1,21 @@
-#ifndef __STORE_H
-#define __STORE_H
+#pragma once
 
-//#include "order.h"
 #include "product.h"
 #include <vector>
 
 class Store {
-  public:
-    Store(std::string name);
-    //Store(std::istream& ist);
-    //void save(std::ostream& ost);
-    std::string name() const;
+public:
+  Store(std::string store_name);
+  std::string name() const; // Returns store name
 
-    // Product Management
-    void add_product(Product product);
-    int number_of_products() const;
-    //Product product(int index) const;
+  // Product Management
+  void add_product(Product* product); // Add a new product to stock
+  int number_of_products(); // # of products defined
+  std::string product_to_string(int product); // string version of a product
 
-    // Order Management
-    //int create_order(std::string email);
-    //void add_to_order(int order_num, Product_order po);
-    //int num_orders() const;
-    //Order order(int order_num) const;
+  friend std::ostream& operator<<(std::ostream& ost, Store& store);
 
-    friend std::ostream& operator<<(std::ostream& ost, const Store& store);
-  private:
-    std::string _name;
-    std::vector<Product> _products;
-    //std::vector<Order> _orders;
+private:
+  std::string _name;
+  std::vector<Product> _products;
 };
-
-#endif
