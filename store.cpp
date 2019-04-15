@@ -10,7 +10,7 @@ void Store::add_product(Product* product) {_products.push_back(product);}
 void Store::add_customer(Customer* customer) {_customers.push_back(customer);}
 
 int Store::number_of_products() {return _products.size();}
-int Store::number_of_customers() {return _Customers.size();}
+int Store::number_of_customers() {return _customers.size();}
 
 std::string Store::product_to_string(int product){
   std::ostringstream oss;
@@ -18,7 +18,7 @@ std::string Store::product_to_string(int product){
   return oss.str();
 }
 
-std::string Store::customer_to_string(int product){
+std::string Store::customer_to_string(int customer){
   std::ostringstream oss;
   oss << _customers[customer];
   return oss.str();
