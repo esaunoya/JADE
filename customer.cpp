@@ -15,7 +15,7 @@ Customer::Customer(){
 std::string Customer::name() {return _customer;}
 std::string Customer::phone() {return _customer_phone;}
 
-std::string Product::to_string(){
+std::string Customer::to_string(){
   std::ostringstream oss;
   oss << _customer << ", " << _customer_phone;
   return oss.str();
