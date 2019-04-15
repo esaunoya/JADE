@@ -20,4 +20,4 @@ public:
 protected:
   int _darkness;
   std::vector<Shot> _shots;
-}
+};
