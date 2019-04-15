@@ -6,7 +6,7 @@
 class Store {
 public:
   Store(std::string store_name);
-  std::string name() const; // Returns store name
+  std::string name(); // Returns store name
 
   // Product Management
   void add_product(Product* product); // Add a new product to stock
@@ -17,5 +17,5 @@ public:
 
 private:
   std::string _name;
-  std::vector<Product> _products;
+  std::vector<Product*> _products;
 };

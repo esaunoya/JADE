@@ -8,7 +8,7 @@ std::string Store::name() {return _name;}
 // Product Management
 void Store::add_product(Product* product) {_products.push_back(product);}
 
-int Store::number_of_products() const {return _products.size();}
+int Store::number_of_products() {return _products.size();}
 
 std::string Store::product_to_string(int product){
   std::ostringstream oss;

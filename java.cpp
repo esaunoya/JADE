@@ -14,7 +14,7 @@ std::string Java::to_string(){
   std::string separator = "";
   for(auto s : _shots) {
     result += separator + shot_to_string[s];
-    separator = ", "
+    separator = ", ";
   }
   return result;
 
