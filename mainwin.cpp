@@ -110,7 +110,8 @@ void Mainwin::on_view_all_click() { // View all products
 }
 
 void Mainwin::on_list_customers_click() { // View all products
-
+  Gtk::MessageDialog d{*this, _store.customer_list()};
+  int result = d.run();
 }
 
 void Mainwin::on_new_customer_click() {

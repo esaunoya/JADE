@@ -16,6 +16,7 @@ public:
   int number_of_customers();
   std::string product_to_string(int product); // string version of a product
   std::string customer_to_string(int customer);
+  std::string customer_list();
 
   friend std::ostream& operator<<(std::ostream& ost, Store& store);
 

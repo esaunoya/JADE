@@ -30,3 +30,11 @@ std::ostream& operator<<(std::ostream& ost, Store& store){
   for(auto p : store._products) ost << " " << p->to_string() << std::endl;
   return ost;
 }
+
+std::string Store::customer_list() {
+    std::ostringstream ost;
+    ost<<"List of Customers"<<std::endl;
+    for (auto c : _customers) ost << " " << c->to_string() << std::endl;
+
+    return ost.str();
+}
