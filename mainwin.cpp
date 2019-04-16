@@ -5,6 +5,7 @@
 
 #include <ostream>
 #include <iostream>
+#include <regex>
 
 Mainwin::Mainwin() : _store{Store{"JADE"}} {
 
@@ -112,11 +113,63 @@ void Mainwin::on_list_customers_click() { // View all products
 
 }
 
-void Mainwin::on_new_customer_click() { // Create a new coffee product
+void Mainwin::on_new_customer_click() {
+    Gtk::Dialog *dialog = new Gtk::Dialog("New Customer", *this);
 
-//  _store.add_product(c);
+    // Name
+    Gtk::HBox b_name;
+
+    Gtk::Label l_name{"Name:"};
+    l_name.set_width_chars(15);
+    b_name.pack_start(l_name, Gtk::PACK_SHRINK);
+
+    Gtk::Entry e_name;
+    e_name.set_max_length(50);
+    b_name.pack_start(e_name, Gtk::PACK_SHRINK);
+    dialog->get_vbox()->pack_start(b_name, Gtk::PACK_SHRINK);
+
+    // Phone Number
+    Gtk::HBox b_phone;
+
+    Gtk::Label l_phone{"Phone:"};
+    l_phone.set_width_chars(15);
+    b_phone.pack_start(l_phone, Gtk::PACK_SHRINK);
+
+    Gtk::Entry e_phone;
+    e_phone.set_max_length(50);
+    b_phone.pack_start(e_phone, Gtk::PACK_SHRINK);
+    dialog->get_vbox()->pack_start(b_phone, Gtk::PACK_SHRINK);
+
+    // Show dialog
+    dialog->add_button("Cancel", 0);
+    dialog->add_button("Create", 1);
+    dialog->show_all();
+
+    int result;
+    std::string name, phone;
+    std::regex re_phone{"[(]?(\\d{3,3}[-)])?\\d{3,3}-\\d{4,4}"};
+    bool fail = true;  // set to true if any data is invalid
+
+    while (fail) {
+        fail = false;  // optimist!
+        result = dialog->run();
+        if (result != 1) {delete dialog; return;}
+        name = e_name.get_text();
+        if (name.size() == 0) {
+            e_name.set_text("### Invalid ###");
+            fail = true;
+        }
+        phone = e_phone.get_text();
+        if(!std::regex_match(phone,re_phone)) {
+            e_phone.set_text("### Invalid ###");
+            fail = true;
+        }
+    }
+    Customer* customer = new Customer{name, phone};
+    _store.add_customer(customer);
+
+    delete dialog;
 }
-
 
 /*void Mainwin::on_create_coffee_click() { // Create a new coffee product
   int darkness = rand() % DARK_LEVELS;
