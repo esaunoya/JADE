@@ -118,7 +118,7 @@ void Mainwin::on_new_customer_click() { // Create a new coffee product
 }
 
 
-void Mainwin::on_create_coffee_click() { // Create a new coffee product
+/*void Mainwin::on_create_coffee_click() { // Create a new coffee product
   int darkness = rand() % DARK_LEVELS;
   double price = 5.00;
   double cost = 2.00;
@@ -129,8 +129,120 @@ void Mainwin::on_create_coffee_click() { // Create a new coffee product
     c->add_shot(shot);
   }
   _store.add_product(c);
-}
+}*/
 
+void Mainwin::on_create_coffee_click() { // Create a new coffee product
+  std::string name;
+  int shot, darkness;
+  double price, cost;
+
+  Shot shots;
+
+
+  Gtk::Dialog *dialog = new Gtk::Dialog();
+  dialog->set_title("Create Coffee");
+
+  // Coffee NAME
+  Gtk::HBox b_name;
+
+  Gtk::Label l_name{"Name:"};
+  l_name.set_width_chars(15);
+  b_name.pack_start(l_name, Gtk::PACK_SHRINK);
+
+  Gtk::Entry e_name;
+  e_name.set_max_length(50);
+  b_name.pack_start(e_name, Gtk::PACK_SHRINK);
+  dialog->get_vbox()->pack_start(b_name, Gtk::PACK_SHRINK);
+
+  // Coffee PRICE
+  Gtk::HBox b_price;
+
+  Gtk::Label l_price{"Price:"};
+  l_price.set_width_chars(15);
+  b_price.pack_start(l_price, Gtk::PACK_SHRINK);
+
+  Gtk::Entry e_price;
+  e_price.set_max_length(50);
+  b_price.pack_start(e_price, Gtk::PACK_SHRINK);
+  dialog->get_vbox()->pack_start(b_price, Gtk::PACK_SHRINK);
+
+  // DONUT COST
+  Gtk::HBox b_cost;
+
+  Gtk::Label l_cost{"Cost:"};
+  l_cost.set_width_chars(15);
+  b_cost.pack_start(l_cost, Gtk::PACK_SHRINK);
+
+  Gtk::Entry e_cost;
+  e_cost.set_max_length(50);
+  b_cost.pack_start(e_cost, Gtk::PACK_SHRINK);
+  dialog->get_vbox()->pack_start(b_cost, Gtk::PACK_SHRINK);
+
+  //COFFEE DARKNESS
+  Gtk::HBox b_darkness;
+
+  Gtk::Label l_darkness{"Darkness:"};
+  l_darkness.set_width_chars(15);
+  b_darkness.pack_start(l_darkness, Gtk::PACK_SHRINK);
+
+  Gtk::ComboBoxText c_darkness;
+  c_darkness.set_size_request(160);
+  c_darkness.append("Blond");
+  c_darkness.append("Light");
+  c_darkness.append("Medium");
+  c_darkness.append("Dark");
+  c_darkness.append("Extra Dark");
+
+  b_darkness.pack_start(c_darkness, Gtk::PACK_SHRINK);
+  dialog->get_vbox()->pack_start(b_darkness, Gtk::PACK_SHRINK);
+
+
+  // SHOTS
+  Gtk::HBox b_shot;
+
+  Gtk::Label l_shot{"Shot:"};
+  l_shot.set_width_chars(15);
+  b_shot.pack_start(l_shot, Gtk::PACK_SHRINK);
+
+  Gtk::ComboBoxText c_shot;
+  c_shot.set_size_request(160);
+  c_shot.append("NONE");
+  c_shot.append("Chocolate");
+  c_shot.append("Vanilla");
+  c_shot.append("Peppermint");
+  c_shot.append("Hazelnut");
+
+  b_shot.pack_start(c_shot, Gtk::PACK_SHRINK);
+  dialog->get_vbox()->pack_start(b_shot, Gtk::PACK_SHRINK);
+
+
+  // Show dialog
+  dialog->add_button("Cancel", 0);
+  dialog->add_button("OK", 1);
+  dialog->show_all();
+  int result = dialog->run();
+
+  dialog->close();
+  //while (Gtk::Main::events_pending())  Gtk::Main::iteration();
+
+  try{
+    if (result == 1) {
+      name = e_name.get_text();
+      price = std::stod(e_price.get_text());
+      cost = std::stod(e_cost.get_text());
+
+      shot = c_shot.get_active_row_number();
+      darkness = c_darkness.get_active_row_number();
+
+			Java* j = new Java{name, price, cost, darkness};
+
+
+			_store.add_product(j);
+    }
+  } catch (std::exception e) {
+    Dialogs::message("Unable to create new coffee", "ERROR");
+  }
+}
 
 /*void Mainwin::on_create_donut_click() { // Create a new donut product
   Frosting frosting = (Frosting)(rand()%frosting_to_string.size());
