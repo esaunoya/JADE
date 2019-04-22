@@ -1,22 +1,25 @@
 #include "customer.h"
-#include <sstream>
-#include <iostream>
-#include <iomanip>
-
 
 Customer::Customer(std::string customer, std::string customer_phone)
-  : _customer{customer}, _customer_phone{customer_phone} {}
+    : _customer{customer}, _customer_phone{customer_phone} { }
+Customer::Customer() : Customer("", "") { }
 
-Customer::Customer(){
-  _customer = "John Doe";
-  _customer_phone = "1234567890";
+Customer::Customer(std::istream& ist) {
+    std::getline(ist, _customer);
+    std::getline(ist, _customer_phone);
+}
+void Customer::save(std::ostream& ost) {
+    ost << _customer << std::endl;
+    ost << _customer_phone << std::endl;
 }
 
-std::string Customer::name() {return _customer;}
-std::string Customer::phone() {return _customer_phone;}
-
-std::string Customer::to_string(){
-  std::ostringstream oss;
-  oss << _customer << ", " << _customer_phone;
-  return oss.str();
+std::string Customer::to_string() const {
+    return _customer + ((_customer_phone.size() > 0) ? (", " + _customer_phone) : "");
 }
+
+std::ostream& operator<<(std::ostream& ost, const Customer& customer) {
+    ost << customer.to_string();
+    return ost;
+}
+
+ 
