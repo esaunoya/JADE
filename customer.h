@@ -3,6 +3,7 @@
 #include <string>
 #include <ostream>
 #include <istream>
+#include <fstream>
 #include <vector>
 
 class Customer {
@@ -15,6 +16,6 @@ class Customer {
     friend std::ostream& operator<<(std::ostream& ost, const Customer& customer);
   private:
     std::string _customer;
-    std::string _customer_phone;  
+    std::string _customer_phone;
 };
 #endif
