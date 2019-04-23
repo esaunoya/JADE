@@ -3,6 +3,8 @@
 #include "donut.h"
 #include "customer.h"
 #include <ostream>
+#include <sstream>
+#include <fstream>
 #include <iostream>
 #include <regex>
 
@@ -33,6 +35,18 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     Gtk::Menu *filemenu = Gtk::manage(new Gtk::Menu());
     menuitem_file->set_submenu(*filemenu);
 
+    //         S A V E
+    // Append Save to the File menu
+    Gtk::MenuItem *menuitem_save = Gtk::manage(new Gtk::MenuItem("_Save", true));
+    menuitem_save->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_save_click));
+    filemenu->append(*menuitem_save);
+
+    //         L O A D
+    // Append Load to the File menu
+    Gtk::MenuItem *menuitem_load = Gtk::manage(new Gtk::MenuItem("_Load", true));
+    menuitem_load->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_load_click));
+    filemenu->append(*menuitem_load);
+
     //         Q U I T
     // Append Quit to the File menu
     Gtk::MenuItem *menuitem_quit = Gtk::manage(new Gtk::MenuItem("_Quit", true));
@@ -59,7 +73,7 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     viewmenu->append(*menuitem_list_customers);
 
 
-    //     C R E A T E   
+    //     C R E A T E
     // Create a Create menu and add to the menu bar
     Gtk::MenuItem *menuitem_create = Gtk::manage(new Gtk::MenuItem("_Create", true));
     menubar->append(*menuitem_create);
@@ -86,7 +100,7 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
 
     //     H E L P
     // Create a Help menu and add to the menu bar
-    Gtk::MenuItem *menuitem_help = 
+    Gtk::MenuItem *menuitem_help =
         Gtk::manage(new Gtk::MenuItem("_Help", true));
     menubar->append(*menuitem_help);
     Gtk::Menu *helpmenu = Gtk::manage(new Gtk::Menu());
@@ -154,7 +168,7 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
 
     // M A I N   A R E A
     Gtk::Label* main_area = Gtk::manage(new Gtk::Label);
-    main_area->set_hexpand(true);    
+    main_area->set_hexpand(true);
     main_area->set_vexpand(true);
     vbox->add(*main_area);
 
@@ -178,9 +192,92 @@ void Mainwin::on_view_all_click() { // View all products
     msg->set_text("");
     std::ostringstream oss;
     oss << _store << std::endl;
-    Gtk::MessageDialog d{*this, "List of Products"}; 
+    Gtk::MessageDialog d{*this, "List of Products"};
     d.set_secondary_text(oss.str());
     int result = d.run();
+}
+
+void Mainwin::on_save_click() {
+
+    Gtk::Dialog dlg{"Enter File Name", *this};
+    dlg.set_default_size(250,10);
+    Gtk::Entry e;
+    dlg.get_vbox()->pack_start(e, Gtk::PACK_SHRINK);
+
+    dlg.add_button("Save", 1);
+
+    dlg.show_all();
+    dlg.run();
+
+    bool valid_data = false;
+
+    while(!valid_data) {
+        if(e.get_text()=="" || e.get_text() == "*Invalid Name*") {
+            valid_data = false;
+            e.set_text("*Invalid Name*");
+            dlg.run();
+        } else valid_data = true;
+    }
+
+    std::string s = e.get_text() + ".txt";
+
+    dlg.close();
+
+    try {
+        std::ofstream ofs{s,std::ofstream::out};
+        _store.save(ofs);
+    } catch (std::exception& e) {
+        Gtk::MessageDialog dialog{*this, "Unable to save "+ s};
+        dialog.set_secondary_text(e.what());
+        dialog.run();
+        dialog.close();
+    }
+}
+
+void Mainwin::on_load_click() {
+    Gtk::FileChooserDialog dialog("Please choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
+    dialog.set_transient_for(*this);
+
+    //Add response buttons the the dialog:
+    dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+    dialog.add_button("_Open", Gtk::RESPONSE_OK);
+
+    //Show the dialog and wait for a user response:
+    int result = dialog.run();
+    std::string filename;
+
+    //Handle the response:
+    switch(result){
+        case(Gtk::RESPONSE_OK):{
+            std::cout << "Open clicked." << std::endl;
+
+            //Notice that this is a std::string, not a Glib::ustring.
+            filename = dialog.get_filename();
+            std::cout << "File selected: " <<  filename << std::endl;
+            break;
+        }
+        case(Gtk::RESPONSE_CANCEL):{
+            std::cout << "Cancel clicked." << std::endl;
+            break;
+        }
+        default:{
+            std::cout << "Unexpected button clicked." << std::endl;
+            break;
+        }
+    }
+
+    try {
+        std::ifstream ifs{filename, std::ifstream::in};
+        //	all_pnl.push_back(emp.get_pnl_report());
+        Store new_str{ifs};
+        _store = new_str;
+    } catch (std::exception& e) {
+        Gtk::MessageDialog dialog{*this, "Unable to open file"};
+        dialog.set_secondary_text(e.what());
+        dialog.run();
+        dialog.close();
+    }
+
 }
 
 void Mainwin::on_new_customer_click() {
@@ -233,7 +330,7 @@ void Mainwin::on_new_customer_click() {
         if(!std::regex_match(phone,re_phone)) {
             e_phone.set_text("### Invalid ###");
             fail = true;
-        }        
+        }
     }
     Customer* customer = new Customer{name, phone};
     _store.add_customer(customer);
@@ -267,7 +364,7 @@ void Mainwin::on_about_click() {
     std::vector< Glib::ustring > authors = {"George F. Rice"};
     dialog.set_authors(authors);
     std::vector< Glib::ustring > artists = {
-        "JADE Logo is licensed under the Creative Commons Attribution Share-Alike 3.0 License by SaxDeux https://commons.wikimedia.org/wiki/File:Logo_JADE.png", 
+        "JADE Logo is licensed under the Creative Commons Attribution Share-Alike 3.0 License by SaxDeux https://commons.wikimedia.org/wiki/File:Logo_JADE.png",
         "Flat Coffee Cup Icon is licensed under the Creative Commons Attribution 3.0 License by superawesomevectors http://fav.me/dbf6otc",
         "Donut Icon is public domain by Hazmat2 via Hyju https://en.wikipedia.org/wiki/File:Simpsons_Donut.svg",
         "Person Icon is licensed under the Creative Commons 0 (Public Domain) License by Clker-Free-Vector-Images https://pixabay.com/en/man-user-profile-person-icon-42934/"
@@ -283,5 +380,3 @@ void Mainwin::on_quit_click() {         // Exit the program
 // /////////////////
 // U T I L I T I E S
 // /////////////////
-
-
