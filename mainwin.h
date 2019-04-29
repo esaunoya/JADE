@@ -1,5 +1,5 @@
-#ifndef __MAINWIN_H
-#define __MAINWIN_H
+#ifndef MAINWIN_H
+#define MAINWIN_H
 
 #include <gtkmm.h>
 #include "store.h"
@@ -10,18 +10,19 @@ class Mainwin : public Gtk::Window
         Mainwin();
         virtual ~Mainwin();
     protected:
-        void on_quit_click();            // Exit the game
+        void on_quit_click();            // Exit the program
         void on_view_all_click();        // View all products
-        void on_list_customers_click();        // View all customers
         void on_create_coffee_click();   // Create a new coffee product
         void on_create_donut_click();    // Create a new donut product
-        void on_new_customer_click(); // Create a new customer
+        void on_list_customers_click();  // List all customers
+        void on_new_customer_click();    // Create a new customer
+        void on_about_click();           // About dialog
+        void on_save_click();
+        void on_load_click();
     private:
         Store _store;
-        Gtk::Label *msg;
-        Gtk::MenuItem *menuitem_new_coffee;
-        Gtk::MenuItem *menuitem_new_donut;
-        Gtk::MenuItem *menuitem_new_customer;
-
+        Gtk::Label *msg;                      // Status message display
+        Gtk::MenuItem *menuitem_new_coffee;   // Create -> Coffee
+        Gtk::MenuItem *menuitem_new_donut;    // Create -> Donut
 };
 #endif
