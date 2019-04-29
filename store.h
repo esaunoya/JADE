@@ -2,13 +2,16 @@
 #include "product.h"
 #include "customer.h"
 #include <vector>
-#include <fstream>
+#include <ostream>
+#include <istream>
+
+const std::string program_name = "Java And Donut Express";
+const std::string program_version = "0.3.0";
+const std::string copyright_year = "2019";
 
 class Store {
   public:
     Store(std::string store_name);
-    Store(std::istream& ist);
-    void save(std::ostream& ost);
     std::string name(); // Returns the store name
 
     void add_product(Product* product); // Add a new product to stock
@@ -18,6 +21,10 @@ class Store {
     void add_customer(Customer* customer); // Add a new customer to the list
     int number_of_customers();  // # of customers on the list
     std::string customer_to_string(int customer); // string version of a customer
+
+    Store(std::istream& ist);
+    void save(std::ostream& ost);
+
     friend std::ostream& operator<<(std::ostream& ost, Store& store);
   private:
     std::string _name;

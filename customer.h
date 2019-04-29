@@ -3,7 +3,6 @@
 #include <string>
 #include <ostream>
 #include <istream>
-#include <fstream>
 #include <vector>
 
 class Customer {

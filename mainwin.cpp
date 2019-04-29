@@ -3,9 +3,8 @@
 #include "donut.h"
 #include "customer.h"
 #include <ostream>
-#include <sstream>
-#include <fstream>
 #include <iostream>
+#include <fstream>
 #include <regex>
 
 Mainwin::Mainwin() : _store{Store{"JADE"}} {
@@ -35,17 +34,17 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     Gtk::Menu *filemenu = Gtk::manage(new Gtk::Menu());
     menuitem_file->set_submenu(*filemenu);
 
-    //         S A V E
-    // Append Save to the File menu
-    Gtk::MenuItem *menuitem_save = Gtk::manage(new Gtk::MenuItem("_Save", true));
-    menuitem_save->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_save_click));
-    filemenu->append(*menuitem_save);
-
     //         L O A D
     // Append Load to the File menu
     Gtk::MenuItem *menuitem_load = Gtk::manage(new Gtk::MenuItem("_Load", true));
     menuitem_load->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_load_click));
     filemenu->append(*menuitem_load);
+
+    //         S A V E
+    // Append Save to the File menu
+    Gtk::MenuItem *menuitem_save = Gtk::manage(new Gtk::MenuItem("_Save", true));
+    menuitem_save->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_save_click));
+    filemenu->append(*menuitem_save);
 
     //         Q U I T
     // Append Quit to the File menu
@@ -133,7 +132,7 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     // Create a new Java type
     Gtk::Image* new_java_image = Gtk::manage(new Gtk::Image{"new_java.png"});
     Gtk::ToolButton *new_java_button = Gtk::manage(new Gtk::ToolButton{*new_java_image});
-    new_java_button->set_tooltip_markup("View all products");
+    new_java_button->set_tooltip_markup("Create new java product");
     new_java_button->signal_clicked().connect(sigc::mem_fun(*this, &Mainwin::on_create_coffee_click));
     toolbar->append(*new_java_button);
 
@@ -141,7 +140,7 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     // Create a new Donut type
     Gtk::Image* new_donut_image = Gtk::manage(new Gtk::Image{"new_donut.png"});
     Gtk::ToolButton *new_donut_button = Gtk::manage(new Gtk::ToolButton{*new_donut_image});
-    new_donut_button->set_tooltip_markup("View all products");
+    new_donut_button->set_tooltip_markup("Create new donut product");
     new_donut_button->signal_clicked().connect(sigc::mem_fun(*this, &Mainwin::on_create_donut_click));
     toolbar->append(*new_donut_button);
 
@@ -195,89 +194,6 @@ void Mainwin::on_view_all_click() { // View all products
     Gtk::MessageDialog d{*this, "List of Products"};
     d.set_secondary_text(oss.str());
     int result = d.run();
-}
-
-void Mainwin::on_save_click() {
-
-    Gtk::Dialog dlg{"Enter File Name", *this};
-    dlg.set_default_size(250,10);
-    Gtk::Entry e;
-    dlg.get_vbox()->pack_start(e, Gtk::PACK_SHRINK);
-
-    dlg.add_button("Save", 1);
-
-    dlg.show_all();
-    dlg.run();
-
-    bool valid_data = false;
-
-    while(!valid_data) {
-        if(e.get_text()=="" || e.get_text() == "*Invalid Name*") {
-            valid_data = false;
-            e.set_text("*Invalid Name*");
-            dlg.run();
-        } else valid_data = true;
-    }
-
-    std::string s = e.get_text() + ".txt";
-
-    dlg.close();
-
-    try {
-        std::ofstream ofs{s,std::ofstream::out};
-        _store.save(ofs);
-    } catch (std::exception& e) {
-        Gtk::MessageDialog dialog{*this, "Unable to save "+ s};
-        dialog.set_secondary_text(e.what());
-        dialog.run();
-        dialog.close();
-    }
-}
-
-void Mainwin::on_load_click() {
-    Gtk::FileChooserDialog dialog("Please choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
-    dialog.set_transient_for(*this);
-
-    //Add response buttons the the dialog:
-    dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-    dialog.add_button("_Open", Gtk::RESPONSE_OK);
-
-    //Show the dialog and wait for a user response:
-    int result = dialog.run();
-    std::string filename;
-
-    //Handle the response:
-    switch(result){
-        case(Gtk::RESPONSE_OK):{
-            std::cout << "Open clicked." << std::endl;
-
-            //Notice that this is a std::string, not a Glib::ustring.
-            filename = dialog.get_filename();
-            std::cout << "File selected: " <<  filename << std::endl;
-            break;
-        }
-        case(Gtk::RESPONSE_CANCEL):{
-            std::cout << "Cancel clicked." << std::endl;
-            break;
-        }
-        default:{
-            std::cout << "Unexpected button clicked." << std::endl;
-            break;
-        }
-    }
-
-    try {
-        std::ifstream ifs{filename, std::ifstream::in};
-        //	all_pnl.push_back(emp.get_pnl_report());
-        Store new_str{ifs};
-        _store = new_str;
-    } catch (std::exception& e) {
-        Gtk::MessageDialog dialog{*this, "Unable to open file"};
-        dialog.set_secondary_text(e.what());
-        dialog.run();
-        dialog.close();
-    }
-
 }
 
 void Mainwin::on_new_customer_click() {
@@ -355,11 +271,11 @@ void Mainwin::on_list_customers_click() {
 void Mainwin::on_about_click() {
     Gtk::AboutDialog dialog{};
     dialog.set_transient_for(*this);
-    dialog.set_program_name("Java and Donut Express");
+    dialog.set_program_name(program_name);
     auto logo = Gdk::Pixbuf::create_from_file("logo.png");
     dialog.set_logo(logo);
-    dialog.set_version("Version 0.2.0");
-    dialog.set_copyright("Copyright 2018");
+    dialog.set_version("Version " + program_version);
+    dialog.set_copyright("Copyright " + copyright_year);
     dialog.set_license_type(Gtk::License::LICENSE_GPL_3_0);
     std::vector< Glib::ustring > authors = {"George F. Rice"};
     dialog.set_authors(authors);
@@ -373,6 +289,24 @@ void Mainwin::on_about_click() {
     dialog.run();
 }
 
+void Mainwin::on_load_click() {         // Load saved data
+    try {
+        std::ifstream ifs{"untitled.dat"};
+        _store = Store{ifs};
+    } catch (std::runtime_error e) {
+        Gtk::MessageDialog d{*this, e.what(), false, Gtk::MESSAGE_WARNING};
+        d.run();
+    }
+}
+void Mainwin::on_save_click() {         // Save data
+    try {
+        std::ofstream ofs{"untitled.dat"};
+        _store.save(ofs);
+    } catch (std::runtime_error e) {
+        Gtk::MessageDialog d{*this, e.what(), false, Gtk::MESSAGE_WARNING};
+        d.run();
+    }
+}
 void Mainwin::on_quit_click() {         // Exit the program
     close();
 }

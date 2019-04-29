@@ -126,7 +126,5 @@ void Mainwin::on_create_coffee_click() { // Create a new coffee product
     // Add the coffee to the store
     _store.add_product(java);
     msg->set_text("New java product \"" + name + "\" created");
-    delete dialog;   
+    delete dialog;
 }
-
-
