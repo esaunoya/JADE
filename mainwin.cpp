@@ -357,9 +357,7 @@ void Mainwin::on_about_click() {
     dialog.set_authors(authors);
     std::vector< Glib::ustring > artists = {
         "JADE Logo is licensed under the Creative Commons Attribution Share-Alike 3.0 License by SaxDeux https://commons.wikimedia.org/wiki/File:Logo_JADE.png",
-        "Flat Coffee Cup Icon is licensed under the Creative Commons Attribution 3.0 License by superawesomevectors http://fav.me/dbf6otc",
-        "Donut Icon is public domain by Hazmat2 via Hyju https://en.wikipedia.org/wiki/File:Simpsons_Donut.svg",
-        "Person Icon is licensed under the Creative Commons 0 (Public Domain) License by Clker-Free-Vector-Images https://pixabay.com/en/man-user-profile-person-icon-42934/"
+        "All icons made by Freepik from www.flaticon.com"
     };
     dialog.set_artists(artists);
     dialog.run();
