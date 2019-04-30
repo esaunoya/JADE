@@ -364,7 +364,7 @@ void Mainwin::on_about_click() {
 }
 
 void Mainwin::on_new_click(){
-
+  _store = Store{"JADE"};
 }
 
 void Mainwin::on_load_click() {         // Load saved data
