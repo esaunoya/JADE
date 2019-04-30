@@ -24,5 +24,6 @@ class Mainwin : public Gtk::Window
         Gtk::Label *msg;                      // Status message display
         Gtk::MenuItem *menuitem_new_coffee;   // Create -> Coffee
         Gtk::MenuItem *menuitem_new_donut;    // Create -> Donut
+        Gtk::MenuItem *menuitem_new_order;    // Create -> Order
 };
 #endif

@@ -59,6 +59,12 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     Gtk::Menu *viewmenu = Gtk::manage(new Gtk::Menu());
     menuitem_view->set_submenu(*viewmenu);
 
+    //         A L L   O R D E R S
+    // Append All Orders to the File menu
+    Gtk::MenuItem *menuitem_all_orders = Gtk::manage(new Gtk::MenuItem("_All Orders", true));
+    //menuitem_all_orders->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_view_all_orders_click));
+    viewmenu->append(*menuitem_all_orders);
+
     //         A L L   P R O D U C T S
     // Append All Products to the File menu
     Gtk::MenuItem *menuitem_all_products = Gtk::manage(new Gtk::MenuItem("_All Products", true));
@@ -79,6 +85,12 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     Gtk::Menu *createmenu = Gtk::manage(new Gtk::Menu());
     menuitem_create->set_submenu(*createmenu);
 
+    //           N E W   O R D E R
+    // Append New Order to the Create menu
+    menuitem_new_order = Gtk::manage(new Gtk::MenuItem("_Order", true));
+    //menuitem_new_order->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_create_order_click));
+    createmenu->append(*menuitem_new_order);
+
     //           N E W   C O F F E E
     // Append New Coffee to the Create menu
     menuitem_new_coffee = Gtk::manage(new Gtk::MenuItem("_Coffee", true));
@@ -96,6 +108,23 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     Gtk::MenuItem *menuitem_new_customer = Gtk::manage(new Gtk::MenuItem("_Customer", true));
     menuitem_new_customer->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_new_customer_click));
     createmenu->append(*menuitem_new_customer);
+
+    //     P R O C E S S
+    // Create a Process menu and add to the menu bar
+    Gtk::MenuItem *menuitem_process = Gtk::manage(new Gtk::MenuItem("_Process", true));
+    menubar->append(*menuitem_process);
+    Gtk::Menu *processmenu = Gtk::manage(new Gtk::Menu());
+    menuitem_process->set_submenu(*processmenu);
+
+    //           F I L L  O R D E R
+    // Append Fill Order to the Process menu
+    Gtk::MenuItem *menuitem_fillorder = Gtk::manage(new Gtk::MenuItem("_Fill Order", true));
+    processmenu->append(*menuitem_fillorder);
+
+    //           P A Y  O R D E R
+    // Append Fill Order to the Process menu
+    Gtk::MenuItem *menuitem_payorder = Gtk::manage(new Gtk::MenuItem("_Pay Order", true));
+    processmenu->append(*menuitem_payorder);
 
     //     H E L P
     // Create a Help menu and add to the menu bar
