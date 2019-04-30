@@ -34,6 +34,13 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     Gtk::Menu *filemenu = Gtk::manage(new Gtk::Menu());
     menuitem_file->set_submenu(*filemenu);
 
+    //         N E W   S T O R E
+    // Append New to the File menu
+    Gtk::MenuItem *menuitem_new = Gtk::manage(new Gtk::MenuItem("_New", true));
+    menuitem_new->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_new_click));
+    filemenu->append(*menuitem_new);
+
+
     //         L O A D
     // Append Load to the File menu
     Gtk::MenuItem *menuitem_load = Gtk::manage(new Gtk::MenuItem("_Load", true));
@@ -45,6 +52,12 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     Gtk::MenuItem *menuitem_save = Gtk::manage(new Gtk::MenuItem("_Save", true));
     menuitem_save->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_save_click));
     filemenu->append(*menuitem_save);
+
+    //         S A V E   A S
+    // Append save as to the File menu
+    Gtk::MenuItem *menuitem_save_as = Gtk::manage(new Gtk::MenuItem("Save _As", true));
+    menuitem_save_as->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_save_as_click));
+    filemenu->append(*menuitem_save_as);
 
     //         Q U I T
     // Append Quit to the File menu
@@ -352,23 +365,113 @@ void Mainwin::on_about_click() {
     dialog.run();
 }
 
+void Mainwin::on_new_click(){
+
+}
+
 void Mainwin::on_load_click() {         // Load saved data
+  Gtk::Dialog *dialog = new Gtk::Dialog("Save As", *this);
+
+  // filename
+  Gtk::HBox b_name;
+
+  Gtk::Label l_name{"Filename (leave as is to open standard saved file):"};
+  l_name.set_width_chars(15);
+  b_name.pack_start(l_name, Gtk::PACK_SHRINK);
+
+  Gtk::Entry e_name;
+  e_name.set_max_length(50);
+  e_name.set_text("JADE.dat");
+  b_name.pack_start(e_name, Gtk::PACK_SHRINK);
+  dialog->get_vbox()->pack_start(b_name, Gtk::PACK_SHRINK);
+
+
+  // Show dialog
+  dialog->add_button("Cancel", 0);
+  dialog->add_button("Load", 1);
+  dialog->show_all();
+
+  int result;
+  std::string name;
+  bool fail = true;  // set to true if any data is invalid
+
+  while (fail) {
+      fail = false;  // optimist!
+      result = dialog->run();
+      if (result != 1) {delete dialog; return;}
+      name = e_name.get_text();
+      if (name.size() == 0) {
+        try {
+            std::ifstream ifs{"JADE.dat"};
+            _store = Store{ifs};
+        } catch (std::runtime_error e) {
+            Gtk::MessageDialog d{*this, e.what(), false, Gtk::MESSAGE_WARNING};
+            d.run();
+        }
+      }
+  }
     try {
-        std::ifstream ifs{"untitled.dat"};
+        std::ifstream ifs{e_name.get_text()};
         _store = Store{ifs};
     } catch (std::runtime_error e) {
         Gtk::MessageDialog d{*this, e.what(), false, Gtk::MESSAGE_WARNING};
         d.run();
     }
+    delete dialog;
 }
 void Mainwin::on_save_click() {         // Save data
     try {
-        std::ofstream ofs{"untitled.dat"};
+        std::ofstream ofs{"JADE.dat"};
         _store.save(ofs);
     } catch (std::runtime_error e) {
         Gtk::MessageDialog d{*this, e.what(), false, Gtk::MESSAGE_WARNING};
         d.run();
     }
+}
+void Mainwin::on_save_as_click(){
+  Gtk::Dialog *dialog = new Gtk::Dialog("Save As", *this);
+
+  // filename
+  Gtk::HBox b_name;
+
+  Gtk::Label l_name{"Fileame:"};
+  l_name.set_width_chars(15);
+  b_name.pack_start(l_name, Gtk::PACK_SHRINK);
+
+  Gtk::Entry e_name;
+  e_name.set_max_length(50);
+  e_name.set_text("example.dat");
+  b_name.pack_start(e_name, Gtk::PACK_SHRINK);
+  dialog->get_vbox()->pack_start(b_name, Gtk::PACK_SHRINK);
+
+
+  // Show dialog
+  dialog->add_button("Cancel", 0);
+  dialog->add_button("Save", 1);
+  dialog->show_all();
+
+  int result;
+  std::string name;
+  bool fail = true;  // set to true if any data is invalid
+
+  while (fail) {
+      fail = false;  // optimist!
+      result = dialog->run();
+      if (result != 1) {delete dialog; return;}
+      name = e_name.get_text();
+      if (name.size() == 0) {
+          e_name.set_text("Invalid filename");
+          fail = true;
+      }
+  }
+  try {
+      std::ofstream ofs{e_name.get_text()};
+      _store.save(ofs);
+  } catch (std::runtime_error e) {
+      Gtk::MessageDialog d{*this, e.what(), false, Gtk::MESSAGE_WARNING};
+      d.run();
+  }
+  delete dialog;
 }
 void Mainwin::on_quit_click() {         // Exit the program
     close();

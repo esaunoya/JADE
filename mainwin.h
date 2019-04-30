@@ -17,7 +17,9 @@ class Mainwin : public Gtk::Window
         void on_list_customers_click();  // List all customers
         void on_new_customer_click();    // Create a new customer
         void on_about_click();           // About dialog
+        void on_new_click();
         void on_save_click();
+        void on_save_as_click();
         void on_load_click();
     private:
         Store _store;
