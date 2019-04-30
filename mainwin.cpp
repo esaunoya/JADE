@@ -15,7 +15,7 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
 
     set_title("Java and Donut Express (JADE)");
     set_icon_from_file("window_logo.png");
-    set_default_size(800, 600);
+    set_default_size(900, 600);
 
     // Put a vertical box container as the Window contents
     Gtk::Box *vbox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL, 0));
@@ -173,8 +173,10 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     new_donut_button->signal_clicked().connect(sigc::mem_fun(*this, &Mainwin::on_create_donut_click));
     toolbar->append(*new_donut_button);
 
-    Gtk::SeparatorToolItem *sep1 = Gtk::manage(new Gtk::SeparatorToolItem());
-    toolbar->append(*sep1);
+
+    Gtk::SeparatorToolItem *sep0 = Gtk::manage(new Gtk::SeparatorToolItem());
+    toolbar->append(*sep0);
+
 
     // C U S T O M E R S
     //
@@ -193,6 +195,38 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     new_customer_button->set_tooltip_markup("Create a new customer");
     new_customer_button->signal_clicked().connect(sigc::mem_fun(*this, &Mainwin::on_new_customer_click));
     toolbar->append(*new_customer_button);
+
+    Gtk::SeparatorToolItem *sep1 = Gtk::manage(new Gtk::SeparatorToolItem());
+    toolbar->append(*sep1);
+
+    //     C R E A T E   O R D E R
+    // Create a new order
+    Gtk::Image* create_order_image = Gtk::manage(new Gtk::Image{"addorder.png"});
+    Gtk::ToolButton *create_order_button = Gtk::manage(new Gtk::ToolButton{*create_order_image});
+    create_order_button->set_tooltip_markup("Create a new order");
+    toolbar->append(*create_order_button);
+
+    //     V I E W   A L L   O R D E R S
+    // View all orders currently defined
+    Gtk::Image* view_orders_image = Gtk::manage(new Gtk::Image{"listorders.png"});
+    Gtk::ToolButton *view_orders_button = Gtk::manage(new Gtk::ToolButton{*view_orders_image});
+    view_orders_button->set_tooltip_markup("View all orders");
+    toolbar->append(*view_orders_button);
+
+    //     F I L L   O R D E R
+    // Fill a order
+    Gtk::Image* fill_order_image = Gtk::manage(new Gtk::Image{"fillorder.png"});
+    Gtk::ToolButton *fill_order_button = Gtk::manage(new Gtk::ToolButton{*fill_order_image});
+    fill_order_button->set_tooltip_markup("Fill Order");
+    toolbar->append(*fill_order_button);
+
+    //     P A Y   O R D E R
+    // Pay a order
+    Gtk::Image* pay_order_image = Gtk::manage(new Gtk::Image{"payorder.png"});
+    Gtk::ToolButton *pay_order_button = Gtk::manage(new Gtk::ToolButton{*pay_order_image});
+    pay_order_button->set_tooltip_markup("Pay Order");
+    toolbar->append(*pay_order_button);
+
 
     // M A I N   A R E A
     Gtk::Label* main_area = Gtk::manage(new Gtk::Label);
