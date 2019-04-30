@@ -2,6 +2,7 @@
 #include "java.h"
 #include "donut.h"
 #include <sstream>
+#include <iostream>
 
 Store::Store(std::string store_name) : _name{store_name} { }
 std::string Store::name() {return _name;}
@@ -56,4 +57,30 @@ std::ostream& operator<<(std::ostream& ost, Store& store) {
     ost << "Products: " << std::endl;
     for (auto p : store._products) ost << "  " << p->to_string() << std::endl;
     return ost;
+}
+
+void Store::place_order(Order order, int customer){
+  //_orders[order] = *_customers[customer];
+}
+
+int Store::number_of_orders(){
+  return _orders.size();
+}
+
+//std::string Store::order_to_string(int order_number){}
+
+
+bool Store::order_is_paid(int order_number){
+  return false;
+}
+
+void Store::pay_order(int order_number){
+}
+
+bool Store::order_is_filled(int order_number){
+  return false;
+}
+
+void Store::fill_order(int order_number){
+
 }

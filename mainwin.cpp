@@ -15,7 +15,7 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
 
     set_title("Java and Donut Express (JADE)");
     set_icon_from_file("window_logo.png");
-    set_default_size(800, 600);
+    set_default_size(900, 600);
 
     // Put a vertical box container as the Window contents
     Gtk::Box *vbox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL, 0));
@@ -34,6 +34,13 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     Gtk::Menu *filemenu = Gtk::manage(new Gtk::Menu());
     menuitem_file->set_submenu(*filemenu);
 
+    //         N E W   S T O R E
+    // Append New to the File menu
+    Gtk::MenuItem *menuitem_new = Gtk::manage(new Gtk::MenuItem("_New", true));
+    menuitem_new->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_new_click));
+    filemenu->append(*menuitem_new);
+
+
     //         L O A D
     // Append Load to the File menu
     Gtk::MenuItem *menuitem_load = Gtk::manage(new Gtk::MenuItem("_Load", true));
@@ -45,6 +52,12 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     Gtk::MenuItem *menuitem_save = Gtk::manage(new Gtk::MenuItem("_Save", true));
     menuitem_save->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_save_click));
     filemenu->append(*menuitem_save);
+
+    //         S A V E   A S
+    // Append save as to the File menu
+    Gtk::MenuItem *menuitem_save_as = Gtk::manage(new Gtk::MenuItem("Save _As", true));
+    menuitem_save_as->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_save_as_click));
+    filemenu->append(*menuitem_save_as);
 
     //         Q U I T
     // Append Quit to the File menu
@@ -58,6 +71,12 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     menubar->append(*menuitem_view);
     Gtk::Menu *viewmenu = Gtk::manage(new Gtk::Menu());
     menuitem_view->set_submenu(*viewmenu);
+
+    //         A L L   O R D E R S
+    // Append All Orders to the File menu
+    Gtk::MenuItem *menuitem_all_orders = Gtk::manage(new Gtk::MenuItem("_All Orders", true));
+    //menuitem_all_orders->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_view_all_orders_click));
+    viewmenu->append(*menuitem_all_orders);
 
     //         A L L   P R O D U C T S
     // Append All Products to the File menu
@@ -79,6 +98,12 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     Gtk::Menu *createmenu = Gtk::manage(new Gtk::Menu());
     menuitem_create->set_submenu(*createmenu);
 
+    //           N E W   O R D E R
+    // Append New Order to the Create menu
+    menuitem_new_order = Gtk::manage(new Gtk::MenuItem("_Order", true));
+    //menuitem_new_order->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_create_order_click));
+    createmenu->append(*menuitem_new_order);
+
     //           N E W   C O F F E E
     // Append New Coffee to the Create menu
     menuitem_new_coffee = Gtk::manage(new Gtk::MenuItem("_Coffee", true));
@@ -96,6 +121,23 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     Gtk::MenuItem *menuitem_new_customer = Gtk::manage(new Gtk::MenuItem("_Customer", true));
     menuitem_new_customer->signal_activate().connect(sigc::mem_fun(*this, &Mainwin::on_new_customer_click));
     createmenu->append(*menuitem_new_customer);
+
+    //     P R O C E S S
+    // Create a Process menu and add to the menu bar
+    Gtk::MenuItem *menuitem_process = Gtk::manage(new Gtk::MenuItem("_Process", true));
+    menubar->append(*menuitem_process);
+    Gtk::Menu *processmenu = Gtk::manage(new Gtk::Menu());
+    menuitem_process->set_submenu(*processmenu);
+
+    //           F I L L  O R D E R
+    // Append Fill Order to the Process menu
+    Gtk::MenuItem *menuitem_fillorder = Gtk::manage(new Gtk::MenuItem("_Fill Order", true));
+    processmenu->append(*menuitem_fillorder);
+
+    //           P A Y  O R D E R
+    // Append Fill Order to the Process menu
+    Gtk::MenuItem *menuitem_payorder = Gtk::manage(new Gtk::MenuItem("_Pay Order", true));
+    processmenu->append(*menuitem_payorder);
 
     //     H E L P
     // Create a Help menu and add to the menu bar
@@ -144,8 +186,10 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     new_donut_button->signal_clicked().connect(sigc::mem_fun(*this, &Mainwin::on_create_donut_click));
     toolbar->append(*new_donut_button);
 
-    Gtk::SeparatorToolItem *sep1 = Gtk::manage(new Gtk::SeparatorToolItem());
-    toolbar->append(*sep1);
+
+    Gtk::SeparatorToolItem *sep0 = Gtk::manage(new Gtk::SeparatorToolItem());
+    toolbar->append(*sep0);
+
 
     // C U S T O M E R S
     //
@@ -164,6 +208,38 @@ Mainwin::Mainwin() : _store{Store{"JADE"}} {
     new_customer_button->set_tooltip_markup("Create a new customer");
     new_customer_button->signal_clicked().connect(sigc::mem_fun(*this, &Mainwin::on_new_customer_click));
     toolbar->append(*new_customer_button);
+
+    Gtk::SeparatorToolItem *sep1 = Gtk::manage(new Gtk::SeparatorToolItem());
+    toolbar->append(*sep1);
+
+    //     C R E A T E   O R D E R
+    // Create a new order
+    Gtk::Image* create_order_image = Gtk::manage(new Gtk::Image{"addorder.png"});
+    Gtk::ToolButton *create_order_button = Gtk::manage(new Gtk::ToolButton{*create_order_image});
+    create_order_button->set_tooltip_markup("Create a new order");
+    toolbar->append(*create_order_button);
+
+    //     V I E W   A L L   O R D E R S
+    // View all orders currently defined
+    Gtk::Image* view_orders_image = Gtk::manage(new Gtk::Image{"listorders.png"});
+    Gtk::ToolButton *view_orders_button = Gtk::manage(new Gtk::ToolButton{*view_orders_image});
+    view_orders_button->set_tooltip_markup("View all orders");
+    toolbar->append(*view_orders_button);
+
+    //     F I L L   O R D E R
+    // Fill a order
+    Gtk::Image* fill_order_image = Gtk::manage(new Gtk::Image{"fillorder.png"});
+    Gtk::ToolButton *fill_order_button = Gtk::manage(new Gtk::ToolButton{*fill_order_image});
+    fill_order_button->set_tooltip_markup("Fill Order");
+    toolbar->append(*fill_order_button);
+
+    //     P A Y   O R D E R
+    // Pay a order
+    Gtk::Image* pay_order_image = Gtk::manage(new Gtk::Image{"payorder.png"});
+    Gtk::ToolButton *pay_order_button = Gtk::manage(new Gtk::ToolButton{*pay_order_image});
+    pay_order_button->set_tooltip_markup("Pay Order");
+    toolbar->append(*pay_order_button);
+
 
     // M A I N   A R E A
     Gtk::Label* main_area = Gtk::manage(new Gtk::Label);
@@ -281,31 +357,119 @@ void Mainwin::on_about_click() {
     dialog.set_authors(authors);
     std::vector< Glib::ustring > artists = {
         "JADE Logo is licensed under the Creative Commons Attribution Share-Alike 3.0 License by SaxDeux https://commons.wikimedia.org/wiki/File:Logo_JADE.png",
-        "Flat Coffee Cup Icon is licensed under the Creative Commons Attribution 3.0 License by superawesomevectors http://fav.me/dbf6otc",
-        "Donut Icon is public domain by Hazmat2 via Hyju https://en.wikipedia.org/wiki/File:Simpsons_Donut.svg",
-        "Person Icon is licensed under the Creative Commons 0 (Public Domain) License by Clker-Free-Vector-Images https://pixabay.com/en/man-user-profile-person-icon-42934/"
+        "All icons made by Freepik from www.flaticon.com"
     };
     dialog.set_artists(artists);
     dialog.run();
 }
 
+void Mainwin::on_new_click(){
+
+}
+
 void Mainwin::on_load_click() {         // Load saved data
+  Gtk::Dialog *dialog = new Gtk::Dialog("Save As", *this);
+
+  // filename
+  Gtk::HBox b_name;
+
+  Gtk::Label l_name{"Filename (leave as is to open standard saved file):"};
+  l_name.set_width_chars(15);
+  b_name.pack_start(l_name, Gtk::PACK_SHRINK);
+
+  Gtk::Entry e_name;
+  e_name.set_max_length(50);
+  e_name.set_text("JADE.dat");
+  b_name.pack_start(e_name, Gtk::PACK_SHRINK);
+  dialog->get_vbox()->pack_start(b_name, Gtk::PACK_SHRINK);
+
+
+  // Show dialog
+  dialog->add_button("Cancel", 0);
+  dialog->add_button("Load", 1);
+  dialog->show_all();
+
+  int result;
+  std::string name;
+  bool fail = true;  // set to true if any data is invalid
+
+  while (fail) {
+      fail = false;  // optimist!
+      result = dialog->run();
+      if (result != 1) {delete dialog; return;}
+      name = e_name.get_text();
+      if (name.size() == 0) {
+        try {
+            std::ifstream ifs{"JADE.dat"};
+            _store = Store{ifs};
+        } catch (std::runtime_error e) {
+            Gtk::MessageDialog d{*this, e.what(), false, Gtk::MESSAGE_WARNING};
+            d.run();
+        }
+      }
+  }
     try {
-        std::ifstream ifs{"untitled.dat"};
+        std::ifstream ifs{e_name.get_text()};
         _store = Store{ifs};
     } catch (std::runtime_error e) {
         Gtk::MessageDialog d{*this, e.what(), false, Gtk::MESSAGE_WARNING};
         d.run();
     }
+    delete dialog;
 }
 void Mainwin::on_save_click() {         // Save data
     try {
-        std::ofstream ofs{"untitled.dat"};
+        std::ofstream ofs{"JADE.dat"};
         _store.save(ofs);
     } catch (std::runtime_error e) {
         Gtk::MessageDialog d{*this, e.what(), false, Gtk::MESSAGE_WARNING};
         d.run();
     }
+}
+void Mainwin::on_save_as_click(){
+  Gtk::Dialog *dialog = new Gtk::Dialog("Save As", *this);
+
+  // filename
+  Gtk::HBox b_name;
+
+  Gtk::Label l_name{"Fileame:"};
+  l_name.set_width_chars(15);
+  b_name.pack_start(l_name, Gtk::PACK_SHRINK);
+
+  Gtk::Entry e_name;
+  e_name.set_max_length(50);
+  e_name.set_text("example.dat");
+  b_name.pack_start(e_name, Gtk::PACK_SHRINK);
+  dialog->get_vbox()->pack_start(b_name, Gtk::PACK_SHRINK);
+
+
+  // Show dialog
+  dialog->add_button("Cancel", 0);
+  dialog->add_button("Save", 1);
+  dialog->show_all();
+
+  int result;
+  std::string name;
+  bool fail = true;  // set to true if any data is invalid
+
+  while (fail) {
+      fail = false;  // optimist!
+      result = dialog->run();
+      if (result != 1) {delete dialog; return;}
+      name = e_name.get_text();
+      if (name.size() == 0) {
+          e_name.set_text("Invalid filename");
+          fail = true;
+      }
+  }
+  try {
+      std::ofstream ofs{e_name.get_text()};
+      _store.save(ofs);
+  } catch (std::runtime_error e) {
+      Gtk::MessageDialog d{*this, e.what(), false, Gtk::MESSAGE_WARNING};
+      d.run();
+  }
+  delete dialog;
 }
 void Mainwin::on_quit_click() {         // Exit the program
     close();

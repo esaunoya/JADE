@@ -4,12 +4,12 @@ GTKFLAGS = `/usr/bin/pkg-config gtkmm-3.0 --cflags --libs`
 
 default: jade
 
-all: main 
+all: main
 
 debug: CXXFLAGS += -g
 debug: default
 
-jade: main.o mainwin.o mainwin-on_create_java_click.o mainwin-on_create_donut_click.o store.o product.o java.o donut.o customer.o *.h
+jade: main.o mainwin.o mainwin-on_create_java_click.o mainwin-on_create_donut_click.o store.o product.o java.o donut.o customer.o order.o *.h
 	${CXX} ${CXXFLAGS} -o jade main.o mainwin.o mainwin-on_create_java_click.o mainwin-on_create_donut_click.o store.o product.o java.o donut.o customer.o $(GTKFLAGS)
 main.o: main.cpp *.h
 	${CXX} ${CXXFLAGS} -c main.cpp $(GTKFLAGS)
@@ -29,5 +29,7 @@ donut.o: donut.cpp *.h
 	${CXX} ${CXXFLAGS} -c donut.cpp
 customer.o: customer.cpp *.h
 	${CXX} ${CXXFLAGS} -c customer.cpp
+order.o: order.cpp *.h
+	${CXX} ${CXXFLAGS} -c order.cpp
 clean:
-	-rm -f *.gch *.o a.out jade 
+	-rm -f *.gch *.o a.out jade
